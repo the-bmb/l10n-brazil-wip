@@ -48,4 +48,64 @@ class TestFinancialMove(TransactionCase):
                      )
             )
 
+    def test_3(self):
+        """DADO que existe uma parcela de 100 reais em aberto
+        QUANDO for recebido/pago 50 reais
+        ENTÃO o valor do balanço da parcela deve ser 50 reais
+        E o status da parcela deve permanecer em aberto."""
+        cr_6 = self.create_receivable_100()
+        cr_6.action_confirm()
+        pay = self.financial_move.create(
+            dict(
+                move_type='rr',
+                company_id=self.main_company.id,
+                currency_id=self.currency_euro.id,
+                amount_document=50.00,
+                payment_id=cr_6.id
+            )
+        )
+        pay.action_confirm()
+        self.assertEqual(50.00, cr_6.balance)
+        self.assertEqual('open', cr_6.state)
 
+    def test_4(self):
+        """DADO que existe uma parcela de 100 reais em aberto
+        QUANDO for recebido/pago 100 reais
+        ENTÃO o valor do balanço da parcela deve ser 0
+        E o status da parcela deve mudar para pago."""
+        cr_4 = self.create_receivable_100()
+        cr_4.action_confirm()
+        pay = self.financial_move.create(
+            dict(
+                move_type='rr',
+                company_id=self.main_company.id,
+                currency_id=self.currency_euro.id,
+                amount_document=100.00,
+                payment_id=cr_4.id
+                )
+            )
+        pay.action_confirm()
+        self.assertEqual(0.00, cr_4.balance)
+        self.assertEqual('paid', cr_4.state)
+
+    def test_5(self):
+        """DADO que existe uma parcela de 100 reais em aberto
+        QUANDO for recebido/pago 150 reais
+        ENTÃO o valor do balanço da parcela deve ser 0
+        E o status da parcela deve mudar para pago
+        E o parceiro deve ficar com um crédito de 50 reais"""
+        cr_5 = self.create_receivable_100()
+        cr_5.action_confirm()
+        pay = self.financial_move.create(
+            dict(
+                move_type='rr',
+                company_id=self.main_company.id,
+                currency_id=self.currency_euro.id,
+                amount_document=150.00,
+                payment_id=cr_5.id
+                )
+            )
+        pay.action_confirm()
+        self.assertEqual(0.00, cr_5.balance)
+        self.assertEqual(50.00, cr_5.amount_residual)
+        self.assertEqual('paid', cr_5.state)
