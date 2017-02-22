@@ -90,7 +90,7 @@ class TestFinancialMove(TransactionCase):
             amount_document=100.00,
             partner_id=self.partner_agrolait.id,
             document_date=time.strftime('%Y') + '-01-01',
-            document_number='2222',
+            document_number='4444',
             move_type='r',
         ))
 
