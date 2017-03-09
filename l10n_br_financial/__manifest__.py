@@ -13,6 +13,7 @@
     'depends': [
         'l10n_br_resource',
         'mail',
+        'account',
     ],
     'data': [
         'data/ir_sequence_data.xml',
