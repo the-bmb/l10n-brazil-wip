@@ -84,6 +84,17 @@ class FinancialMoveCreate(models.TransientModel):
     payment_method_id = fields.Many2one(
         required=False,
     )
+    move_id = fields.Many2one(
+        comodel_name='account.move',
+        string='Journal Entry',
+        # readonly=True,
+        index=True,
+        ondelete='restrict',
+        copy=False,
+        help="Link to the automatically generated "
+             "Journal Items."
+    )
+
     @api.onchange('payment_term', 'document_number',
                   'document_date', 'amount_document')
     def onchange_fields(self):
@@ -112,7 +123,7 @@ class FinancialMoveCreate(models.TransientModel):
         for record in self:
             moves = []
             for move in record.line_ids:
-                move_id = financial_move.create(dict(
+                obj_id = financial_move.create(dict(
                     company_id=self.company_id.id,
                     currency_id=self.currency_id.id,
                     move_type=self.move_type,
@@ -127,9 +138,9 @@ class FinancialMoveCreate(models.TransientModel):
                     account_analytic_id=self.account_analytic_id.id,
                     account_id=self.account_id.id,
                     amount_document=move.amount_document,
+                    move_id=self.move_id.id,
                 ))
-                moves.append(move_id.id)
-                pass
+                moves.append(obj_id.id)
         if record.move_type == 'r':
             name = 'Receivable'
         else:

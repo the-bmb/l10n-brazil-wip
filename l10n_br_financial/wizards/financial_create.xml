@@ -11,7 +11,6 @@
         <field name="arch" type="xml">
             <form string="Financial_create">
                 <group>
-
                     <field name="state" invisible="1"/>
                         <group>
                             <field name="company_id"/>
@@ -28,6 +27,7 @@
                             <field name="account_analytic_id"/>
                             <field name="payment_mode"/>
                             <field name="payment_term"/>
+                            <field name="move_id"/>
                         </group>
                         <group>
                             <field name="amount_document"/>

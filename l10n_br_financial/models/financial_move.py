@@ -116,11 +116,16 @@ class FinancialMove(models.Model):
         track_visibility='onchange',
     )
 
-    move_id = fields.Many2one('account.move', string='Journal Entry',
-                              readonly=True, index=True, ondelete='restrict',
-                              copy=False,
-                              help="Link to the automatically generated "
-                                   "Journal Items.")
+    move_id = fields.Many2one(
+        comodel_name='account.move',
+        string='Journal Entry',
+        # readonly=True,
+        index=True,
+        ondelete='restrict',
+        copy=False,
+        help="Link to the automatically generated "
+             "Journal Items."
+    )
 
     account_move_line_id = fields.Many2one(
         comodel_name='account.move.line',
