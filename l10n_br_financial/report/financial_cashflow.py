@@ -77,6 +77,7 @@ class FinancialCashflow(models.Model):
     )
     account_id = fields.Many2one(
         comodel_name='account.account',
+        domain=[('internal_type', 'in', ('receivable', 'payable'))],
         string='Account',
     )
 

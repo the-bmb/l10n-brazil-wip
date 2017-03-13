@@ -15,14 +15,13 @@ FINANCIAL_TYPE_AML = {
     }
 }
 
-# financial_move_id= ???  FIXME
-
 
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
     financial_move_id = fields.Many2one(
         comodel_name='financial.move',
+        readonly=True,
     )
 
     def _prepare_financial_move(self):

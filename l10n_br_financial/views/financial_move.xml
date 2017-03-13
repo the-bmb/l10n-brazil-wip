@@ -115,10 +115,10 @@
                         </group>
                     </group>
                     <group>
-                        <group>
-                            <field name="payment_method_id"/>
-                            <field name="payment_term_id"/>
-                        </group>
+                        <!--<group>-->
+                            <!--<field name="payment_method_id"/>-->
+                            <!--<field name="payment_term_id"/>-->
+                        <!--</group>-->
                         <group>
                             <field name="amount_document"/>
                             <field name="balance"/>

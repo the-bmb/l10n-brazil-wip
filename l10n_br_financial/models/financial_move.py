@@ -63,9 +63,9 @@ class FinancialMove(models.Model):
     account_id = fields.Many2one(
         comodel_name='account.account',
         string='Account',
-        required=True,
+        # required=True,
         readonly=True, states={'draft': [('readonly', False)]},
-        domain=[('deprecated', '=', False)],
+        domain=[('internal_type', 'in', ('receivable', 'payable'))],
         help="The partner account used for this invoice."
     )
     balance = fields.Monetary(

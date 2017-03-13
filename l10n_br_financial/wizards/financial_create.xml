@@ -41,18 +41,18 @@
                         </field>
                     </group>
                 <footer>
-                    <button name='compute'
+                    <button name='compute_new_financial'
                         string='Compute'
                         class='btn-primary oe_highlight'
                         type='object'
                         states="draft"
                     />
-                    <button name='compute'
-                        string='Re-compute'
-                        class='btn-primary oe_highlight'
-                        type='object'
-                        states="computed"
-                    />
+                    <!--<button name='_compute_new_financial'-->
+                        <!--string='Re-compute'-->
+                        <!--class='btn-primary oe_highlight'-->
+                        <!--type='object'-->
+                        <!--states="computed"-->
+                    <!--/>-->
                     <button name='doit'
                         string='Create'
                         class='btn-primary oe_highlight'

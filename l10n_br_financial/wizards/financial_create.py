@@ -7,7 +7,6 @@ from ..models.financial_move_model import (
     FINANCIAL_MOVE
 )
 
-
 class FinancialMoveCreate(models.TransientModel):
 
     _name = 'financial.move.create'
@@ -78,9 +77,13 @@ class FinancialMoveCreate(models.TransientModel):
     )
     account_id = fields.Many2one(
         comodel_name='account.account',
+        domain=[('internal_type', 'in', ('receivable', 'payable'))],
+        required=True,
         string='Account',
     )
-
+    payment_method_id = fields.Many2one(
+        required=False,
+    )
     @api.onchange('payment_term', 'document_number',
                   'document_date', 'amount_document')
     def onchange_fields(self):
@@ -98,68 +101,71 @@ class FinancialMoveCreate(models.TransientModel):
                 document_item=self.document_number + '/' + str(idx + 1),
                 due_date=item[0],
                 amount_document=item[1],
+                account_id=self.account_id,
             )
             payment_ids.append((0, False, payment))
         self.line_ids = payment_ids
 
     @api.multi
-    def compute(self):
-        financial_move = self.env['financial.move']
-        for record in self:
-            moves = []
-            for move in record.line_ids:
-                move_id = financial_move.create(dict(
-                    company_id=self.company_id.id,
-                    currency_id=self.currency_id.id,
-                    move_type=self.move_type,
-                    partner_id=self.partner_id.id,
-                    document_number=self.document_number,
-                    document_date=self.document_date,
-                    payment_mode=self.payment_mode.id,
-                    payment_term=self.payment_term.id,
-                    document_item=move.document_item,
-                    due_date=move.due_date,
-                    account_analytic_id=move.account_analytic_id,
-                    account_id=move.account_id,
-                ))
-                moves.append(move_id.id)
+    def compute_new_financial(self):
+        # financial_move = self.env['financial.move']
+        # for record in self:
+        #     moves = []
+        #     for move in record.line_ids:
+        #         # move_id = financial_move.create(dict(
+        #         #     company_id=self.company_id.id,
+        #         #     currency_id=self.currency_id.id,
+        #         #     move_type=self.move_type,
+        #         #     partner_id=self.partner_id.id,
+        #         #     document_number=self.document_number,
+        #         #     document_date=self.document_date,
+        #         #     payment_mode=self.payment_mode.id,
+        #         #     # payment_method=self.payment_mode.,
+        #         #     payment_term=self.payment_term.id,
+        #         #     document_item=move.document_item,
+        #         #     due_date=move.due_date,
+        #         #     account_analytic_id=move.account_analytic_id,
+        #         #     account_id=move.account_id,
+        #         # ))
+        #         # moves.append(move_id.id)
+        #         pass
+        # if record.move_type == 'r':
+        #     name = 'Receivable'
+        # else:
+        #     name = 'Payable'
+        # action = {
+        #     'name': name,
+        #     'type': 'ir.actions.act_window',
+        #     'res_model': 'financial.move',
+        #     'domain': [('id', 'in', moves)],
+        #     'views': [(self.env.ref(
+        #         'l10n_br_financial.financial_move_tree_view').id, 'list')],
+        #     'view_type': 'list',
+        #     'view_mode': 'list',
+        #     'target': 'current'
+        # }
+        # return action
+        print "oi"
 
-        if record.move_type == 'r':
-            name = 'Receivable'
-        else:
-            name = 'Payable'
-        action = {
-            'name': name,
-            'type': 'ir.actions.act_window',
-            'res_model': 'financial.move',
-            'domain': [('id', 'in', moves)],
-            'views': [(self.env.ref(
-                'l10n_br_financial.financial_move_tree_view').id, 'list')],
-            'view_type': 'list',
-            'view_mode': 'list',
-            'target': 'current'
-        }
-        return action
-
-    @api.multi
-    def doit(self):
-        for wizard in self:
-            # fm = self.env['financial.move']
-            # TODO
-            pass
-
-        if wizard.move_type == 'r':
-            action = 'financial_receivable_act_window'
-        else:
-            action = 'financial_payable_act_window'
-        action = {
-            'type': 'ir.actions.act_window',
-            'name': action,  # TODO
-            'res_model': 'financial.move',
-            # 'domain': [('id', '=', result_ids)],f
-            'view_mode': 'tree,form',
-        }
-        return action
+    # @api.multi
+    # def doit(self):
+    #     for wizard in self:
+    #         # fm = self.env['financial.move']
+    #         # TODO
+    #         pass
+    #
+    #     if wizard.move_type == 'r':
+    #         action = 'financial_receivable_act_window'
+    #     else:
+    #         action = 'financial_payable_act_window'
+    #     action = {
+    #         'type': 'ir.actions.act_window',
+    #         'name': action,  # TODO
+    #         'res_model': 'financial.move',
+    #         # 'domain': [('id', '=', result_ids)],f
+    #         'view_mode': 'tree,form',
+    #     }
+    #     return action
 
 
 class FinancialMoveLineCreate(models.TransientModel):
@@ -189,5 +195,20 @@ class FinancialMoveLineCreate(models.TransientModel):
 
     financial_move_id = fields.Many2one(
         comodel_name='financial.move.create',
-        required=True
+        # required=True
+        readonly=True,
+    )
+
+    account_id = fields.Many2one(
+        comodel_name='account.account',
+        string='Account',
+        # required=True,
+        # readonly=True, states={'draft': [('readonly', False)]},
+        domain=[('internal_type', 'in', ('receivable', 'payable'))],
+        help="The partner account used for this invoice."
+    )
+
+    account_analytic_id = fields.Many2one(
+        comodel_name='account.analytic.account',
+        string='Analytic account'
     )
