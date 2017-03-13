@@ -246,7 +246,7 @@ class FinancialMove(models.Model):
             credit = self.amount_document
         return dict(  # FIXME: change to account parameters
             name=self.display_name,
-            date_maturity=self.date_due,
+            date_maturity=self.due_date,
             date=self.document_date,
             company_id=self.company_id and self.company_id.id,
             currency_id=self.currency_id and self.currency_id.id,
@@ -254,9 +254,9 @@ class FinancialMove(models.Model):
             credit=credit,
             partner_id=self.partner_id and self.partner_id.id or False,
             internal_type=self.move_type,
-            move_id=self.move_id,
+            move_id=self.move_id and self.move_id.id,
             financial_move_id=self.id,
-            account_id=self.account_id,
+            account_id=self.account_id and self.account_id.id,
         )
 
     @api.multi

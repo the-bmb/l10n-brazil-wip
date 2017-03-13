@@ -108,44 +108,44 @@ class FinancialMoveCreate(models.TransientModel):
 
     @api.multi
     def compute_new_financial(self):
-        # financial_move = self.env['financial.move']
-        # for record in self:
-        #     moves = []
-        #     for move in record.line_ids:
-        #         # move_id = financial_move.create(dict(
-        #         #     company_id=self.company_id.id,
-        #         #     currency_id=self.currency_id.id,
-        #         #     move_type=self.move_type,
-        #         #     partner_id=self.partner_id.id,
-        #         #     document_number=self.document_number,
-        #         #     document_date=self.document_date,
-        #         #     payment_mode=self.payment_mode.id,
-        #         #     # payment_method=self.payment_mode.,
-        #         #     payment_term=self.payment_term.id,
-        #         #     document_item=move.document_item,
-        #         #     due_date=move.due_date,
-        #         #     account_analytic_id=move.account_analytic_id,
-        #         #     account_id=move.account_id,
-        #         # ))
-        #         # moves.append(move_id.id)
-        #         pass
-        # if record.move_type == 'r':
-        #     name = 'Receivable'
-        # else:
-        #     name = 'Payable'
-        # action = {
-        #     'name': name,
-        #     'type': 'ir.actions.act_window',
-        #     'res_model': 'financial.move',
-        #     'domain': [('id', 'in', moves)],
-        #     'views': [(self.env.ref(
-        #         'l10n_br_financial.financial_move_tree_view').id, 'list')],
-        #     'view_type': 'list',
-        #     'view_mode': 'list',
-        #     'target': 'current'
-        # }
-        # return action
-        print "oi"
+        financial_move = self.env['financial.move']
+        for record in self:
+            moves = []
+            for move in record.line_ids:
+                move_id = financial_move.create(dict(
+                    company_id=self.company_id.id,
+                    currency_id=self.currency_id.id,
+                    move_type=self.move_type,
+                    partner_id=self.partner_id.id,
+                    document_number=self.document_number,
+                    document_date=self.document_date,
+                    payment_mode=self.payment_mode.id,
+                    payment_method_id=self.payment_mode.payment_method_id.id,
+                    payment_term=self.payment_term.id,
+                    document_item=move.document_item,
+                    due_date=move.due_date,
+                    account_analytic_id=self.account_analytic_id.id,
+                    account_id=self.account_id.id,
+                    amount_document=move.amount_document,
+                ))
+                moves.append(move_id.id)
+                pass
+        if record.move_type == 'r':
+            name = 'Receivable'
+        else:
+            name = 'Payable'
+        action = {
+            'name': name,
+            'type': 'ir.actions.act_window',
+            'res_model': 'financial.move',
+            'domain': [('id', 'in', moves)],
+            'views': [(self.env.ref(
+                'l10n_br_financial.financial_move_tree_view').id, 'list')],
+            'view_type': 'list',
+            'view_mode': 'list',
+            'target': 'current'
+        }
+        return action
 
     # @api.multi
     # def doit(self):
