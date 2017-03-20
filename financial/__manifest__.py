@@ -13,7 +13,7 @@
     'depends': [
         'l10n_br_resource',
         'account_payment_mode',
-        'account_parent',
+        # 'account_parent',
         'account',
         'mail',
     ],

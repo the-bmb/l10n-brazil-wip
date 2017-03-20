@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright 2017 KMEE
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+from datetime import datetime
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
@@ -269,6 +270,9 @@ class FinancialMove(models.Model):
             if not record.ref_item:
                 record.ref_item = '1'
 
+    percent_interest = fields.Float()  # TODO:
+    percent_discount = fields.Float()  # TODO:
+
     def _before_create(self, values):
         return values
 
@@ -397,3 +401,31 @@ class FinancialMove(models.Model):
         else:
             action = {'type': 'ir.actions.act_window_close'}
         return action
+
+    def cron_interest(self):
+        if self.env['resource.calendar'].data_eh_dia_util_bancario \
+                    (datetime.today()):
+            record = self.search([
+                ('state', '=', 'open'),
+                ('date_business_maturity', '<', datetime.today())
+            ])
+            record.compute_interest()
+
+    @api.depends('payment_mode_id', 'amount', 'date_business_maturity')
+    def compute_interest(self):
+        for record in self:
+            if self.env['resource.calendar'].data_eh_dia_util_bancario \
+                        (datetime.today()) and record.state == 'open' and \
+                    (datetime.today() > datetime.strptime
+                        (record.date_business_maturity, '%Y-%m-%d')):
+                days = (
+                    datetime.today() - datetime.strptime(record.date_maturity,
+                                                         '%Y-%m-%d'))
+                interest = record.amount * ((record.payment_mode_id.
+                                             interest_percent * days.days)
+                                            / 100)
+                delay_fee = (record.payment_mode_id.delay_fee_percent / 100) * \
+                            record.amount
+                record.amount_interest = interest + delay_fee
+
+        pass
