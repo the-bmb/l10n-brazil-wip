@@ -263,7 +263,7 @@ class FinancialMove(models.Model):
     @api.multi
     def action_number(self):
         for record in self:
-            if record.ref == 'New':
+            if record.ref in ('New', 'Novo'):
                 record.ref = self.env['ir.sequence'].next_by_code(
                     FINANCIAL_SEQUENCE[record.financial_type]) or 'New'
             if not record.ref_item:

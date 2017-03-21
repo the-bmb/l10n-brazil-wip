@@ -50,9 +50,9 @@ class TestFinancialMove(TransactionCase):
     #  a receber/pagar para manter controle sobre o fluxo de caixa.
     # """
     def test_us_1_ac_1(self):
-        """ DADO a data de vencimento de 27/02/2017
+        """ DADO a data de vencimento de 12/02/2017
         QUANDO criado um lançamento de contas a receber
-        ENTÃO a data de vencimento útil deve ser de 01/03/2017"""
+        ENTÃO a data de vencimento útil deve ser de 14/03/2017"""
 
         self.assertEqual(self.cr_1.date_business_maturity, '2018-02-14')
 
