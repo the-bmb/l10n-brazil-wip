@@ -226,6 +226,7 @@ class FinancialMove(models.Model):
     amount_interest = fields.Monetary(
         string=u'Interest',
         readonly=True,
+        compute='compute_interest'
     )
     amount_refund = fields.Monetary(
         string=u'Refund',
@@ -418,14 +419,13 @@ class FinancialMove(models.Model):
                     state == 'open' and \
                     (datetime.today() > datetime.strptime
                      (record.date_business_maturity, '%Y-%m-%d')):
-                days = (
+                day = (
                     datetime.today() - datetime.strptime(record.date_maturity,
                                                          '%Y-%m-%d'))
-                interest = record.amount * ((record.payment_mode_id.
-                                             interest_percent * days.days)
-                                            / 100)
+                interest = record.amount * (record.payment_mode_id.
+                                            interest_percent * day.days) / 100
+
                 delay_fee = (record.payment_mode_id.
                              delay_fee_percent / 100) * record.amount
                 record.amount_interest = interest + delay_fee
-
         pass
