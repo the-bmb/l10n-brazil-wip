@@ -4,7 +4,6 @@
 
 import datetime
 import time
-from bzrlib.plugins.launchpad import account
 
 from odoo.exceptions import ValidationError
 from odoo.tests.common import TransactionCase
@@ -25,10 +24,10 @@ class TestFinancialMove(TransactionCase):
         self.financial_edit = self.env['financial.edit']
         self.partner_agrolait = self.env.ref("base.res_partner_2")
         self.partner_axelor = self.env.ref("base.res_partner_2")
-        self.payment_term_id_30_70 = self.env.ref\
-            ("account.account_payment_term_advance")
-        self.payment_mode_1 = self.env.ref\
-            ("account_payment_mode.payment_mode_outbound_ct1")
+        self.payment_term_id_30_70 = self.env.\
+            ref("account.account_payment_term_advance")
+        self.payment_mode_1 = self.env.\
+            ref("account_payment_mode.payment_mode_outbound_ct1")
         self.bank_journal_id = self.env['account.journal'].search(
             [
                 ('type', '=', 'bank')
